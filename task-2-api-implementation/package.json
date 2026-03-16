@@ -1,0 +1,14 @@
+{
+  "name": "task-2-api-implementation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "In-memory task management API for GT assessment",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
