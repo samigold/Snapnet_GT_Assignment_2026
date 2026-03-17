@@ -12,6 +12,7 @@ const {
   updateTask,
   updateTaskStatus,
   unassignTask,
+  assignTask,
   deleteTask
 } = require("../services/task-service");
 
@@ -30,7 +31,10 @@ router.post("/", (req, res, next) => {
 router.get("/", (req, res, next) => {
   try {
     const filters = validateTaskFilterQuery(req.query);
-    const tasks = listTasks(filters);
+    const tasks = listTasks(filters, req.user.id);
+    if (tasks.length === 0) {
+      return res.status(200).json({ message: "No tasks found." });
+    }
     return res.status(200).json(tasks);
   } catch (err) {
     return next(err);
@@ -67,6 +71,20 @@ router.patch("/:id/unassign", (req, res, next) => {
   } catch (err) {
     return next(err);
   }
+});
+
+router.patch("/:id/assign", (req, res, next) => {
+    try {
+        const taskId = validateTaskIdParam(req.params.id);
+        const { newAssigneeId } = req.body;
+        if (newAssigneeId === undefined) {
+            throw new HttpError(400, "newAssigneeId is required to assign a task.");
+        }
+        const task = assignTask(taskId, newAssigneeId, req.user.id);
+        return res.status(200).json(task);
+    } catch (err) {
+        return next(err);
+    }
 });
 
 router.delete("/:id", (req, res, next) => {

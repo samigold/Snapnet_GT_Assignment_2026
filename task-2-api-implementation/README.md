@@ -103,7 +103,17 @@ Only the assignee can call this route.
 
 Only the assigner can call this route.
 
-### 6. Delete Task
+### 6. Assign Task
+
+`PATCH /tasks/:id/assign`
+
+```json
+{
+    "assigneeId" : 2
+}
+```
+
+### 7. Delete Task
 
 `DELETE /tasks/:id`
 

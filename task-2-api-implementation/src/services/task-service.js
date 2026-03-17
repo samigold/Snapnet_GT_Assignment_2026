@@ -49,8 +49,13 @@ function createTask(payload, actorUserId) {
   return task;
 }
 
-function listTasks(filters) {
+function listTasks(filters, actorUserId) {
   return store.tasks.filter((task) => {
+    // Only show tasks the user created or is assigned to
+    if (task.assignedBy !== actorUserId && task.assignedTo !== actorUserId) {
+      return false;
+    }
+
     if (filters.assignedTo !== undefined && task.assignedTo !== filters.assignedTo) {
       return false;
     }
@@ -93,6 +98,15 @@ function unassignTask(taskId, actorUserId) {
   return task;
 }
 
+function assignTask(taskId, newAssigneeId, actorUserId) {
+    const task = getTaskByIdOrThrow(taskId);
+    assertIsAssigner(task, actorUserId);
+    ensureUserExists(newAssigneeId);
+    task.assignedTo = newAssigneeId;
+    task.status = "pending";
+    return task;
+}
+
 function deleteTask(taskId, actorUserId) {
   const task = getTaskByIdOrThrow(taskId);
   assertIsAssigner(task, actorUserId);
@@ -107,5 +121,6 @@ module.exports = {
   updateTask,
   updateTaskStatus,
   unassignTask,
+  assignTask,
   deleteTask
 };
